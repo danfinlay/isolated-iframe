@@ -22,13 +22,10 @@ if ('serviceWorker' in navigator) {
         var serviceWorker;
         if (registration.installing) {
             serviceWorker = registration.installing;
-            document.querySelector('#kind').textContent = 'installing';
         } else if (registration.waiting) {
             serviceWorker = registration.waiting;
-            document.querySelector('#kind').textContent = 'waiting';
         } else if (registration.active) {
             serviceWorker = registration.active;
-            document.querySelector('#kind').textContent = 'active';
         }
         if (serviceWorker) {
             // logState(serviceWorker.state);
@@ -48,16 +45,18 @@ if ('serviceWorker' in navigator) {
 
 window.addEventListener('load', ready)
 
-function ready () {
-    var iframe = document.createElement("iframe");
-    var img = document.createElement('img');
-    img.src = 'http://www.fillmurray.com/200/300'
+async function ready () {
+  await installServiceWorker();
+  console.log('installed! Injecting untrusted script!')
+  var iframe = document.createElement("iframe");
+  var img = document.createElement('img');
+  img.src = 'http://www.fillmurray.com/200/300'
 
-    container.appendChild(iframe);
-    iframe.name = "frame"
-    iframe.id = 'test-iframe';
-    injectHTML(iframe, isolating_header)
-    injectHTML(iframe, malicious_html)
+  container.appendChild(iframe);
+  iframe.name = "frame"
+  iframe.id = 'test-iframe';
+  injectHTML(iframe, isolating_header)
+  injectHTML(iframe, malicious_html)
 }
 
 // Modified from:
@@ -86,3 +85,39 @@ function injectHTML(iframe, html_string){
 
 }
 
+function installServiceWorker () {
+  return new Promise((resolve, rej) => {
+    if ('serviceWorker' in navigator) {
+        console.log('serviceworker is supported, registering')
+        console.dir(navigator.serviceWorker)
+        return navigator.serviceWorker.register('./sw.js', {
+            scope: './'
+        }).then(function (registration) {
+          console.log('registered', registration)
+            var serviceWorker;
+            if (registration.installing) {
+                serviceWorker = registration.installing;
+            } else if (registration.waiting) {
+                serviceWorker = registration.waiting;
+            } else if (registration.active) {
+                serviceWorker = registration.active;
+                resolve(true)
+            }
+            if (serviceWorker) {
+              serviceWorker.addEventListener('statechange', function (e) {
+                if (e.target.state === 'active') {
+                  resolve(true)
+                }
+              });
+            }
+        }).catch (function (error) {
+          rej(error)
+            // Something went wrong during registration. The service-worker.js file
+            // might be unavailable or contain a syntax error.
+        });
+    } else {
+      console.log('sw not supported')
+      return rej(false)
+    }
+  })
+}
