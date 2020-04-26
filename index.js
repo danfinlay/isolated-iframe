@@ -13,7 +13,7 @@ const isolating_header = `
 <script>
 console.log('isolating header injected!')
 if ('serviceWorker' in navigator) {
-    console.log('serviceworker is supported, registering')
+    console.log('internal serviceworker is supported, registering')
     console.dir(navigator.serviceWorker)
     navigator.serviceWorker.register('./sw.js', {
         scope: './'
@@ -75,7 +75,7 @@ function injectHTML(iframe, html_string){
      if (iframedoc){
          // Put the content in the iframe
          iframedoc.open();
-         iframedoc.writeln(html_string);
+         iframedoc.write(html_string);
          iframedoc.close();
      } else {
         //just in case of browsers that don't support the above 3 properties.
@@ -88,18 +88,14 @@ function injectHTML(iframe, html_string){
 function installServiceWorker () {
   return new Promise((resolve, rej) => {
     if ('serviceWorker' in navigator) {
-        console.log('serviceworker is supported, registering')
+        console.log('external serviceworker is supported, registering')
         console.dir(navigator.serviceWorker)
         return navigator.serviceWorker.register('./sw.js', {
             scope: './'
         }).then(function (registration) {
           console.log('registered', registration)
             var serviceWorker;
-            if (registration.installing) {
-                serviceWorker = registration.installing;
-            } else if (registration.waiting) {
-                serviceWorker = registration.waiting;
-            } else if (registration.active) {
+            if (registration.active) {
                 serviceWorker = registration.active;
                 resolve(true)
             }
