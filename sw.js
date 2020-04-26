@@ -1,7 +1,13 @@
 console.log('SERVICE WORKER REPORTING!')
 self.addEventListener('fetch', (e) => {
     console.log('[Service Worker] Fetched resource '+e.request.url);
-    e.respondWith(Promise.resolve(undefined))
+
+    // Just reject fill murray for now:
+    if (e.request.url.indexOf('murray') !== -1) {
+      e.respondWith(Promise.resolve(undefined))
+    }
+
+    return
 });
 
 self.addEventListener('install', function(e) {
