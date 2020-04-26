@@ -6,6 +6,6 @@ Based on [this thread](https://ocapjs.org/t/containment-via-service-worker/94/9?
 
 Unlike `ses-iframe`, I'm aspiring to the simpler goal of just shutting down network access for the whole frame. Not trying to emulate or attenuate network access, just shut it down. If I can get a silent iframe, I can build up functionality from there.
 
-Not yet working.
+Currently only blocks on subsequent loads of the page, since the service-worker takes time to load and begin enforcing its fetch filtering.
 
 If I get it working, I hope to package up the working parts into a reusable module.
