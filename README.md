@@ -15,7 +15,7 @@ const childIframe = await createIsolatedIframe(untrustedHtml, props)
 body.appendChild(childIframe)
 ```
 
-The `props` object could simply be a read-only JS object, but I think it would be even cooler to support passing an asynchronous API object, to allow easy bidirectional communication, maybe using [captp-stream](https://github.com/danfinlay/captp-stream) over [port-stream](https://www.npmjs.com/package/extension-port-stream).
+The `props` object could simply be a read-only JS object that is appended to the child's global scope, but I think it would be even cooler to support passing an asynchronous API object, to allow easy bidirectional communication, maybe using [captp-stream](https://github.com/danfinlay/captp-stream) over [port-stream](https://www.npmjs.com/package/extension-port-stream).
 
 ## Current Status
 
