@@ -56,8 +56,6 @@ async function ready () {
   await installServiceWorker();
   console.log('installed! Injecting untrusted script!')
   var iframe = document.createElement("iframe");
-  var img = document.createElement('img');
-  img.src = 'http://www.fillmurray.com/200/300'
 
   iframe.name = "untrusted-frame";
   container.appendChild(iframe);
