@@ -6,39 +6,46 @@ body {
    background: url("http://www.fillmurray.com/200/300")
 }
 </style>
-
 `;
 
 const isolating_header = `
 <script>
 console.log('isolating header injected!')
-if ('serviceWorker' in navigator) {
-    console.log('internal serviceworker is supported, registering')
-    console.dir(navigator.serviceWorker)
-    navigator.serviceWorker.register('./sw.js', {
-        scope: './'
-    }).then(function (registration) {
-      console.log('registered', registration)
-        var serviceWorker;
-        if (registration.installing) {
-            serviceWorker = registration.installing;
-        } else if (registration.waiting) {
-            serviceWorker = registration.waiting;
-        } else if (registration.active) {
-            serviceWorker = registration.active;
-        }
-        if (serviceWorker) {
-            // logState(serviceWorker.state);
-            serviceWorker.addEventListener('statechange', function (e) {
-                // logState(e.target.state);
-            });
-        }
-    }).catch (function (error) {
-        // Something went wrong during registration. The service-worker.js file
-        // might be unavailable or contain a syntax error.
-    });
-} else {
-  console.log('sw not supported')
+installServiceWorker()
+.then(() => {
+  window.top.postMessage('[[LOADED_MESSAGE]]', '*');
+})
+function installServiceWorker () {
+  return new Promise((resolve, rej) => {
+    if ('serviceWorker' in navigator) {
+        console.log('external serviceworker is supported, registering')
+        console.dir(navigator.serviceWorker)
+        return navigator.serviceWorker.register('./sw.js', {
+            scope: './'
+        }).then(function (registration) {
+          console.log('registered', registration)
+            var serviceWorker;
+            if (registration.active) {
+                serviceWorker = registration.active;
+                resolve(true)
+            }
+            if (serviceWorker) {
+              serviceWorker.addEventListener('statechange', function (e) {
+                if (e.target.state === 'active') {
+                  resolve(true)
+                }
+              });
+            }
+        }).catch (function (error) {
+          rej(error)
+            // Something went wrong during registration. The service-worker.js file
+            // might be unavailable or contain a syntax error.
+        });
+    } else {
+      console.log('sw not supported')
+      return rej(false)
+    }
+  })
 }
 </script>
 `
@@ -52,11 +59,33 @@ async function ready () {
   var img = document.createElement('img');
   img.src = 'http://www.fillmurray.com/200/300'
 
+  iframe.name = "untrusted-frame";
   container.appendChild(iframe);
-  iframe.name = "frame"
-  iframe.id = 'test-iframe';
-  injectHTML(iframe, isolating_header)
+  console.log('child appended.')
+  console.log('injecting isolating header')
+  const unique_event = injectIsolatingHeader(iframe)
+  console.log('header injected, awaiting child readiness')
+  await childReady(unique_event);
+  console.log('child connected to sw, injecting untrusted html')
   injectHTML(iframe, malicious_html)
+  console.log('untrusted html injected')
+}
+
+function childReady (unique_event) {
+  return new Promise((resolve, reject) => {
+    window.onmessage = function(e){
+      if (e.data == unique_event) {
+        resolve(true)
+      }
+    }
+  })
+}
+
+function injectIsolatingHeader (iframe) {
+  const unique_id = 'secure_iframe_' + String(Math.random());
+  const unique_header = isolating_header.replace('[[LOADED_MESSAGE]]', unique_id);
+  injectHTML(iframe, unique_header);
+  return unique_id;
 }
 
 // Modified from:
