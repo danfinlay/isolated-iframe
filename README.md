@@ -21,6 +21,9 @@ The `props` object could simply be a read-only JS object that is appended to the
 
 - [x] Parent page starts filtering serviceworker before creating child iframe
 - [x] Parent injects serviceworker registration into child before the untrusted render code.
-- [  ] Parent waits for serviceworker registration in child to complete before injecting untrusted render code.
+- [x] Parent waits for serviceworker registration in child to complete before injecting untrusted render code.
 - [x] Once serviceworker is registered, child requests to non-same-origins are rejected.
+- [ ] Get working on first load
+- [x] Get working on second load on Firefox
+- [ ] Get working on Chrome
 
