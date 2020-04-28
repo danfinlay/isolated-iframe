@@ -1,0 +1,22 @@
+{
+  "name": "isolated-iframe",
+  "version": "1.0.0",
+  "description": "An experiment in isolating an iFrame from the network using service-workers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danfinlay/isolated-iframe.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danfinlay/isolated-iframe/issues"
+  },
+  "homepage": "https://github.com/danfinlay/isolated-iframe#readme",
+  "devDependencies": {
+    "node-static": "^0.7.11"
+  }
+}
