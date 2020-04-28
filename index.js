@@ -14,7 +14,7 @@ function createIsolatedHtml (untrustedHtml) {
   .then(() => {
     const body = document.getElementsByTagName('body')[0]
     const message = '[[LOADED_MESSAGE]]';
-    body.innerHTML = unescape(${escape(untrustedHtml)})
+    body.innerHTML = unescape('${escape(untrustedHtml)}')
     window.top.postMessage(message, '*');
   })
   function installServiceWorker () {
@@ -57,14 +57,18 @@ function createIsolatedHtml (untrustedHtml) {
 
 export default async function inject (untrusted_html, container) {
   await installServiceWorker();
+  console.log('service worker installed, creating iframe')
 
   var iframe = document.createElement('iframe');
+  console.log('injecting the html')
   const unique_id = safelyInjectHtml(iframe, untrusted_html);
+  console.log('html injected, appending child')
+  container.appendChild(iframe);
   iframe.name = `untrusted_${unique_id}`;
+  console.log('waiting child')
   await childReady(unique_id);
 
-  container.appendChild(iframe);
-  console.log('child appended.')
+  console.log('child ready.')
 }
 
 function childReady (unique_event) {
