@@ -17,6 +17,9 @@ function createIsolatedHtml (untrustedHtml) {
     body.innerHTML = unescape('${escape(untrustedHtml)}')
     window.top.postMessage(message, '*');
   })
+  .catch((reason) => {
+    console.trace('problem!', reason)
+  })
   function installServiceWorker () {
     return new Promise((resolve, rej) => {
       if ('serviceWorker' in navigator) {
@@ -65,6 +68,7 @@ export default async function inject (untrusted_html, container) {
   console.log('html injected, appending child')
   container.appendChild(iframe);
   iframe.name = `untrusted_${unique_id}`;
+  iframe.style = 'border: 1px solid #CCC';
   console.log('waiting child')
   await childReady(unique_id);
 
