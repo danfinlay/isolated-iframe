@@ -26,4 +26,5 @@ The `props` object could simply be a read-only JS object that is appended to the
 - [ ] Get working on first load
 - [x] Get working on second load on Firefox
 - [ ] Get working on Chrome
+- [ ] Explore getting injection working with [srcdoc](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) api.
 
