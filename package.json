@@ -1,6 +1,6 @@
 {
   "name": "isolated-iframe",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "An experiment in isolating an iFrame from the network using service-workers.",
   "main": "index.js",
   "scripts": {
