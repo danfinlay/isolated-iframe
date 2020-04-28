@@ -8,12 +8,35 @@ Unlike `ses-iframe`, I'm aspiring to the simpler goal of just shutting down netw
 
 If I get it working, I hope to package up the working parts into a reusable module.
 
-## Possible API once packaging
+## Current API (Unstable!)
+
+This module is under casual experimentation, and currently does not work as intended, and should not be relied on for anything.
+
+That said, here is the current usage, as seen in `example.js`:
 
 ```javascript
-const childIframe = await createIsolatedIframe(untrustedHtml, props)
-body.appendChild(childIframe)
+import iframeIsolator from 'iframe-isolator';
+
+// Imagine this HTML is untrusted code:
+const malicious_html = `
+  HELLO!
+<style>
+body {
+   background: url("http://www.fillmurray.com/200/300")
+}
+</style>
+`;
+
+window.addEventListener('load', ready)
+
+async function ready () {
+  const container = document.getElementById('container')
+
+  // First argument is the malicious HTML to inject, the second argument is an element to inject within:
+  await iframeIsolator(malicious_html, container)
+}
 ```
+Later I'd love to pass in a `props` object also, which could ideally include functions for helping the child load and subscribe to updates.
 
 The `props` object could simply be a read-only JS object that is appended to the child's global scope, but I think it would be even cooler to support passing an asynchronous API object, to allow easy bidirectional communication, maybe using [captp-stream](https://github.com/danfinlay/captp-stream) over [port-stream](https://www.npmjs.com/package/extension-port-stream).
 
